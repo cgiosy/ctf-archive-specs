@@ -89,6 +89,7 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 
 - uid: 사용자의 고유 번호입니다. 4바이트의 음수가 아닌 정수입니다.
   - 각 유저는 가입한 순서대로 번호를 부여받습니다. 처음 가입한 사용자는 1번입니다.
+- is_admin: 사용자가 admin인지 여부입니다. true 혹은 false입니다.
 - username: 사용자의 핸들(핸들)입니다. 256바이트 이하의 문자열입니다.
 - email: 사용자의 이메일입니다. 256바이트 이하의 문자열입니다.
   - Rust에서 이메일 형식 검증을 지원하는 라이브러리로 [validator](https://docs.rs/validator/0.13.0/validator/)를 권장합니다.
@@ -96,8 +97,10 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
   - Rust에서 Argon2 해시 처리를 지원하는 라이브러리로 [sodiumoxide](https://github.com/sodiumoxide/sodiumoxide)를 권장합니다.
 - problems: 사용자가 푼 문제의 목록입니다. `submission` 관계로 표현됩니다.
 - solves: 사용자가 푼 문제 개수입니다. 4바이트의 음수가 아닌 정수입니다.
-- exp: 사용자의 분야별 경험치 합계입니다. 크기가 6인 8바이트 정수 배열입니다.
+- exp: 사용자의 경험치 합계입니다. 8바이트 정수입니다.
+- exps: 사용자의 분야별 경험치입니다. 크기가 6인 8바이트 정수 배열입니다.
 - groups: 사용자가 속한 그룹의 목록입니다. `group` 관계로 표현됩니다.
+- roles: 사용자가 속한 role의 목록입니다. `role` 관계로 표현됩니다.
 - friends: 사용자가 친구로 설정해둔 사람의 목록입니다. `friend` 관계로 표현됩니다.
 - achievements: 사용자가 달성한 업적의 목록입니다. 크기가 256인 비트 집합입니다.
 - favorite_achievement: 사용자가 대표로 표시하길 원하는 업적의 번호입니다. achievements의 크기 미만의 값을 저장할 수 있는 음수가 아닌 정수입니다.
@@ -105,25 +108,36 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 - profile_image: 사용자의 프로필 사진 경로입니다. 256바이트 이하의 문자열입니다.
 - profile_background: 사용자의 프로필 배경 사진 경로입니다. 256바이트 이하의 문자열입니다.
 
+### role
+
+- rid: role의 고유 번호입니다. 4바이트의 음수가 아닌 정수입니다.
+- rolename: role의 이름입니다. 256바이트 이하의 문자열입니다.
+
 ### 그룹
 
+- gid: 그룹의 고유 번호입니다. 4바이트의 음수가 아닌 정수입니다.
+- groupname: 그룹의 이름입니다. 256바이트 이하의 문자열입니다.
+
+### 그룹 관계
+
 - user: 사용자의 uid입니다.
-- group: 그룹의 이름입니다.
+- group: 그룹의 gid입니다.
 
 각 사용자는 여러 그룹에 속할 수 있습니다.
 
-특수한 그룹으로 admin과 everyone, creator가 있습니다. admin은 거의 모든 권한이 허락되며, everyone은 가장 적은 권한이 허락됩니다. 관리자를 포함해 모든 사용자는 everyone 그룹에 속해 있습니다. creator는 문제를 만들 수 있습니다.
+특수한 그룹으로 everyone이 있습니다. everyone에게는 가장 기본적인 권한이 허락됩니다. 관리자를 포함해 모든 사용자는 everyone 그룹에 속해 있습니다.
 
-### 친구
+### 친구 관계
 
 - from: 사용자의 uid입니다.
 - to: 사용자가 친구로 등록한 대상의 uid입니다.
 
 ### 문제
 
-- id: 문제의 고유 번호입니다. 4바이트의 0이상의 정수입니다.
+- id: 문제의 고유 번호입니다. 4바이트의 음수가 아닌 정수입니다.
   - 각 문제는 추가된 순서대로 번호를 부여받습니다. 처음 추가된 문제는 1번입니다.
-- level: 문제의 분야별 난이도입니다. 크기가 6인 0 이상 30 이하의 정수 배열입니다.
+- level: 문제의 대표 난이도입니다. 0 이상 32 이하의 음이 아닌 정수입니다.
+- levels: 문제의 분야별 난이도입니다. 크기가 6인 0 이상 30 이하의 정수 배열입니다.
   - 각 분야의 난이도가 0이라면, 문제가 해당 분야에 속하지 않음을 의미합니다.
 - title: 문제의 제목입니다. 256바이트 이하의 문자열입니다.
 - source: 문제의 출처입니다. 256바이트 이하의 문자열입니다.
@@ -131,11 +145,10 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
   - `/` 로 시작하면(예를 들면 `/.+/gmi`) 정규식, 아니면 일반 문자열입니다.
 - content: 문제의 설명(디스크립션)입니다. 65536바이트 이하의 문자열입니다.
   - 마크다운 형식입니다.
-- allowlist: 문제를 보고 제출할 수 있는 그룹 및 사용자의 목록입니다.
-  - `@` 로 시작하면 사용자, 아니면 그룹입니다.
-- creators: 문제를 편집하거나 공개 범위를 수정할 수 있는 그룹 및 사용자의 목록입니다.
+- role: 문제를 보고 제출할 수 있는 role.
+- group: 문제를 편집하거나 공개 범위를 수정할 수 있는 그룹 및 사용자의 목록입니다.
 - solvers: 문제를 푼 사용자의 목록입니다. **submission** 관계로 표현됩니다.
-- solves: 문제를 푼 사용자의 수입니다. 4바이트의 0이상의 정수입니다.
+- solves: 문제를 푼 사용자의 수입니다. 4바이트의 음수가 아닌 정수입니다.
 - comments: 문제에 대한 사용자 평가, 기여 목록입니다. **submission** 관계로 표현됩니다.
 
 ### 제출
@@ -147,20 +160,24 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 - comment_time: 사용자가 해당 문제에 대한 평가를 마지막으로 수정한 시간입니다. 8바이트 UNIX timestamp입니다.
 - comment: 사용자가 해당 문제에 대해 적은 평가입니다. 65536바이트 이하의 문자열입니다.
 
-제출이 추가 혹은 갱신될 경우, 다음 의사코드와 동일한 일을 수행하는 [TRIGGER](https://www.postgresql.org/docs/current/sql-createtrigger.html)를 작동시켜야 합니다.
+제출이 추가될 경우, 다음 의사코드와 동일한 일을 수행하는 [TRIGGER](https://www.postgresql.org/docs/current/sql-createtrigger.html)를 작동시켜야 합니다.
 
 ```cpp
-// 입력: uid, id, level
+// 입력: uid, id, levels[6]
 auto& p = problems[id];
-auto old_plevel = p.level;
+auto sum = 0;
 p.solves += 1;
-p.level += (level - p.level) / p.solves;
-users[uid].exp += 1 << round(old_plevel);
-
-auto diff = (1 << round(p.level)) - (1 << round(old_plevel));
-if (diff != 0)
-	for (auto& user : p.solvers)
-		user.exp += diff;
+for (int i = 0; i < 6; i++) {
+	auto old_plevel = p.levels[i];
+	p.levels[i] += (levels[i] - p.levels[i]) / p.solves;
+	sum += 1 << round(p.levels[i]);
+	users[uid].exp += 1 << round(old_plevel);
+	auto diff = (1 << round(p.levels[i])) - (1 << round(old_plevel));
+	if (diff != 0)
+		for (auto& user : p.solvers)
+			user.exps[i] += diff;
+}
+p.level = floor(log2(sum));
 ```
 
 ### 세션 ID
@@ -205,7 +222,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 ### PUT /problems
 
-요청한 사용자가 문제 생성 권한이 있는 경우, 주어진 문제를 새로 추가합니다. 이미 해당 문제가 존재한다면, 아무 일도 하지 않습니다. 문제 생성 권한이 있다는 것은, 요청한 사용자의 groups에 admin과 creator 중 하나 이상이 포함된 경우입니다.
+요청한 사용자가 문제 생성 권한이 있는 경우, 주어진 문제를 새로 추가합니다. 이미 해당 문제가 존재한다면, 아무 일도 하지 않습니다. 문제 생성 권한이 있다는 것은, 요청한 사용자의 groups에 admin과 role 중 하나 이상이 포함된 경우입니다.
 
 - title: 문제의 제목입니다.
 - source: 문제에 제출할 출처입니다.
@@ -223,7 +240,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 ### GET /problems
 
-요청한 사용자에게 공개된 문제들 중, 주어진 조건에 맞는 문제의 목록을 반환합니다. 공개되었다는 것은, 요청한 사용자의 groups에 admin이 없으며, allowlist와의 교집합이 공집합이 아니라는 의미입니다.
+요청한 사용자에게 공개된 문제들 중, 주어진 조건에 맞는 문제의 목록을 반환합니다. 공개되었다는 것은, 요청한 사용자의 groups에 admin 혹은 allow가 포함되었다는 의미입니다.
 
 - query: 문제 검색 쿼리입니다.
 - sort: 문제를 정렬할 기준입니다.
@@ -385,7 +402,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 정렬 기준은 다음과 같습니다.
 
-- level
+- exp
 - solves
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
