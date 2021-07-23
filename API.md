@@ -8,6 +8,8 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 
 만약 주어진 입력이 존재하지 않는 요소를 참조한다고 판단된 경우, HTTP 상태 코드는 __404 Not Found__ 여야 합니다. 또한 __각 엔드포인트에 명시된 값을 반환__ 하며, 쿼리에 대한 결과를 만들기 전, 입력에 따른 요소를 가져오는 도중에 즉시 응답을 완료하여야 합니다. 즉, 파싱 및 값 참조 외에 추가적인 성능 소모가 없어야 합니다.
 
+본 문서에서 산술 평균, 조화 평균, 절사 평균, 혹은 중위값 등이 아닌 그냥 '평균'이란 단어가 나온다면, 아직 어떤 기준을 사용할지 명확히 정해지지 않았다는 것이므로 생략하고 보시면 됩니다.
+
 ## 문법
 
 정상적인 경우 HTTP 상태 코드는 200 OK로 응답해야 하지만, 사용자의 요청에 따라 다른 코드로 응답해야 할 수 있습니다. 목록 중간중간에 그래야 하는 상황들을 명시해 두었으며, 각 상태 코드의 의미는 다음과 같습니다.
@@ -156,7 +158,7 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 
 - id: 해결된 문제의 id입니다.
 - user: 문제를 푼 사용자의 uid입니다.
-- level: 사용자가 평가한 해당 문제의 분야별 난이도입니다. 크기가 6인 0 이상 30 이하의 정수 배열입니다.
+- levels: 사용자가 평가한 해당 문제의 분야별 난이도입니다. 크기가 6인 0 이상 30 이하의 정수 배열입니다.
 - time: 사용자가 해당 문제를 푼 시간입니다. 8바이트 UNIX timestamp입니다.
 - comment_time: 사용자가 해당 문제에 대한 평가를 마지막으로 수정한 시간입니다. 8바이트 UNIX timestamp입니다.
 - comment: 사용자가 해당 문제에 대해 적은 평가입니다. 65536바이트 이하의 문자열입니다.
@@ -269,7 +271,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 - { count, problems }
   - count: 해당 문제의 열람 권한이 있는 문제들 중, 주어진 조건에 맞는 문제의 개수입니다. sort 혹은 page에 영향을 받지 __않습니다__.
   - problems: 문제 정보들을 sort에 따라 정렬했을 때, [25 * (page - 1), 25 * page) 구간 배열입니다. 문제 정보는 다음과 같은 객체입니다.
-    - { id, level, title, source, solves }
+    - { id, level, levels, title, source, solves }
 
 실패 시 처리는 다음과 같습니다.
 
@@ -311,7 +313,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { level, title, source, content, solves }
+- { level, levels, title, source, content, solves }
 
 실패 시 처리는 다음과 같습니다.
 
@@ -352,7 +354,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 - { count, solvers }
   - count: 해당 문제를 푼 사람의 수입니다. sort 혹은 page에 영향을 받지 __않습니다__.
   - solvers: 해당 문제를 sort에 따라 정렬했을 때, [25 * (page - 1), 25 * page) 구간 배열입니다. 문제 정보는 다음과 같은 객체입니다.
-    - { id, level, title, source, solves }
+    - { id, level, levels, title, source, solves }
 
 실패 시 처리는 다음과 같습니다.
 
@@ -414,7 +416,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 - count: 해당 문제를 푼 사람의 수입니다. sort 혹은 page에 영향을 받지 __않습니다__.
 - solvers: 해당 문제를 sort에 따라 정렬했을 때, [25 * (page - 1), 25 * page) 구간 배열입니다. 문제 정보는 다음과 같은 객체입니다.
-  - { level, time, comment_time, comment, username, exp, profileImage }
+  - { level, levels, time, comment_time, comment, username, exp, profileImage }
 
 실패 시 처리는 다음과 같습니다.
 
