@@ -457,7 +457,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 - { count, users }
   - count: username에 query를 포함하는 사용자의 수입니다. sort 혹은 page에 영향을 받지 __않습니다__.
   - users: username에 query를 포함하는 사용자들의 정보를 sort에 따라 정렬했을 때, [50 * (page - 1), 50 * page) 구간 배열입니다. 사용자 정보는 다음과 같은 객체입니다.
-    - { username, solves, exp, profileImage }
+    - { username, solves, exp, exps, profileImage }
 
 ### POST /users/:username
 
@@ -524,7 +524,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { username, solves, exp, achievements, favoriteAchievement, profileImage, profileBackground }
+- { username, solves, exp, exps, achievements, favoriteAchievement, profileImage, profileBackground }
 
 실패 시 처리는 다음과 같습니다.
 
@@ -536,7 +536,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { username, problems, solves, exp, friends, achievements, favoriteAchievement, settings, profileImage, profileBackground }
+- { username, problems, solves, exp, exps, friends, achievements, favoriteAchievement, settings, profileImage, profileBackground }
 
 실패 시 처리는 다음과 같습니다.
 
