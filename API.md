@@ -159,7 +159,7 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 - user: 문제를 푼 사용자의 uid입니다.
 - levels: 사용자가 평가한 해당 문제의 분야별 난이도입니다. 크기가 6인 0 이상 30 이하의 정수 배열입니다.
 - time: 사용자가 해당 문제를 푼 시간입니다. 8바이트 UNIX timestamp입니다.
-- comment_time: 사용자가 해당 문제에 대한 평가를 마지막으로 수정한 시간입니다. 8바이트 UNIX timestamp입니다.
+- commentTime: 사용자가 해당 문제에 대한 평가를 마지막으로 수정한 시간입니다. 8바이트 UNIX timestamp입니다.
 - comment: 사용자가 해당 문제에 대해 적은 평가입니다. 65536바이트 이하의 문자열입니다.
 
 제출이 추가될 경우, 다음 의사코드와 동일한 일을 수행하는 [TRIGGER](https://www.postgresql.org/docs/current/sql-createtrigger.html)를 작동시켜야 합니다.
@@ -408,13 +408,13 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 정렬 기준은 다음과 같습니다.
 
 - time
-- comment_time
+- commentTime
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
 - count: 해당 문제를 푼 사람의 수입니다. sort 혹은 page에 영향을 받지 __않습니다__.
 - submissions: 해당 문제를 sort에 따라 정렬했을 때, [25 * (page - 1), 25 * page) 구간 배열입니다. 기여 정보는 다음과 같은 객체입니다.
-  - { level, levels, time, comment_time, comment, username, exps, profileImage }
+  - { levels, time, commentTime, comment, username, exps, profileImage }
 
 실패 시 처리는 다음과 같습니다.
 
