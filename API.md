@@ -103,6 +103,7 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 - achievements: 사용자가 달성한 업적의 목록입니다. 크기가 256인 비트 집합입니다.
   - 0번 비트는 항상 켜져 있습니다.
 - settings: 사용자의 개인 설정입니다. 65536바이트 이하의 JSON 문자열입니다.
+- description: 사용자의 프로필 한 줄 소개입니다. 256바이트 이하의 문자열입니다.
 - favoriteAchievement: 사용자가 대표로 표시하길 원하는 업적의 번호입니다. achievements의 크기 미만의 값을 저장할 수 있는 음수가 아닌 정수입니다.
   - 설정한 업적이 없거나, 선택 가능한 다른 업적이 없는 경우 기본값은 항상 0입니다.
 - profileImage: 사용자의 프로필 사진 경로입니다. 256바이트 이하의 문자열입니다.
@@ -457,13 +458,13 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 - { count, users }
   - count: username에 query를 포함하는 사용자의 수입니다. sort 혹은 page에 영향을 받지 __않습니다__.
   - users: username에 query를 포함하는 사용자들의 정보를 sort에 따라 정렬했을 때, [50 * (page - 1), 50 * page) 구간 배열입니다. 사용자 정보는 다음과 같은 객체입니다.
-    - { username, solves, exp, exps, profileImage }
+    - { username, solves, exp, exps, description, profileImage }
 
 ### POST /users/:username
 
 요청한 사용자가 admin에 속하거나 해당 사용자 본인일 경우, 해당 사용자의 정보를 변경합니다.
 
-- { settings, favoriteAchievement, profileImage, profileBackground }
+- { settings, description, favoriteAchievement, profileImage, profileBackground }
 
 성공 시 반환값은 JSON이며, 빈 객체입니다.
 
@@ -524,7 +525,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { username, solves, exp, exps, achievements, favoriteAchievement, profileImage, profileBackground }
+- { username, solves, exp, exps, achievements, description, favoriteAchievement, profileImage, profileBackground }
 
 실패 시 처리는 다음과 같습니다.
 
@@ -536,7 +537,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { username, problems, solves, exp, exps, friends, achievements, favoriteAchievement, settings, profileImage, profileBackground }
+- { username, problems, solves, exp, exps, friends, achievements, description, favoriteAchievement, settings, profileImage, profileBackground }
 
 실패 시 처리는 다음과 같습니다.
 
