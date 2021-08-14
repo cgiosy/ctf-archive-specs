@@ -587,7 +587,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { username, problems, solves, exp, exps, friends, achievements, description, favoriteAchievement, settings, profileImage, profileBackground }
+- { auth, username, problems, solves, exp, exps, friends, achievements, description, favoriteAchievement, settings, profileImage, profileBackground }
 
 실패 시 처리는 다음과 같습니다.
 
