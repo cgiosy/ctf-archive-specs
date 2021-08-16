@@ -139,7 +139,7 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 - source: 문제의 출처입니다. 256바이트 이하의 문자열입니다.
 - flag: 문제의 답안입니다. 1024바이트 이하의 문자열입니다.
   - `/` 로 시작하면(예를 들면 `/.+/gmi`) 정규식, 아니면 일반 문자열입니다.
-- file: 문제에 연결된 파일의 이름에 포함되어 있는 고유 코드입니다. UUID 값입니다.
+- uuid: 문제에 연결된 파일의 이름에 포함되어 있는 고유 코드입니다. UUID 값입니다.
 - content: 문제의 설명(디스크립션)입니다. 65536바이트 이하의 문자열입니다.
   - 마크다운 형식입니다.
 - creator: 문제를 만든 사람의 uid입니다.
@@ -273,7 +273,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 - { count, problems }
   - count: 해당 문제의 열람 권한이 있는 문제들 중, 주어진 조건에 맞는 문제의 개수입니다. sort 혹은 page에 영향을 받지 __않습니다__.
   - problems: 문제 정보들을 sort에 따라 정렬했을 때, [25 * (page - 1), 25 * page) 구간 배열입니다. 문제 정보는 다음과 같은 객체입니다.
-    - { id, level, levels, title, source, file, solves }
+    - { id, levels, title, source, uuid, solves }
 
 실패 시 처리는 다음과 같습니다.
 
@@ -311,7 +311,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { level, levels, title, source, file, content, solves }
+- { levels, title, source, uuid, content, solves }
 
 실패 시 처리는 다음과 같습니다.
 
@@ -320,14 +320,14 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 ### PUT /problems/:id/files
 
-요청한 사용자가 해당 문제의 편집 권한이 있는 경우, 해당 문제에 파일을 업로드합니다. 만약 이미 해당 문제에 업로드된 파일이 있다면, 해당 파일을 삭제합니다. 업로드된 파일은 `https://cdn.ctf-archive.com/ctf/:id-:file.zip` 에 접속했을 때 다운로드 가능해야 합니다.
+요청한 사용자가 해당 문제의 편집 권한이 있는 경우, 해당 문제에 파일을 업로드합니다. 만약 이미 해당 문제에 업로드된 파일이 있다면, 해당 파일을 삭제합니다. 업로드된 파일은 `https://cdn.ctf-archive.com/ctf/:id-:uuid.zip` 에 접속했을 때 다운로드 가능해야 합니다.
 
 - 파일은 Raw Body로 들어옵니다. **Content-Type은 무시합니다**. `application/json` 이 아니더라도 정상적으로 요청을 받아야 합니다.
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { file }
-  - file: 추가된 문제의 파일 이름에 포함된 UUID입니다.
+- { uuid }
+  - uuid: 추가된 문제의 파일 이름에 포함된 UUID입니다.
 
 실패 시 처리는 다음과 같습니다.
 
@@ -508,7 +508,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 - { count, users }
   - count: username에 query를 포함하는 사용자의 수입니다. sort 혹은 page에 영향을 받지 __않습니다__.
   - users: username에 query를 포함하는 사용자들의 정보를 sort에 따라 정렬했을 때, [50 * (page - 1), 50 * page) 구간 배열입니다. 사용자 정보는 다음과 같은 객체입니다.
-    - { username, solves, exp, exps, description, profileImage }
+    - { username, solves, exps, description, profileImage }
 
 ### POST /users/:username
 
@@ -575,7 +575,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { username, solves, exp, exps, achievements, description, favoriteAchievement, profileImage, profileBackground }
+- { username, solves, exps, achievements, description, favoriteAchievement, profileImage, profileBackground }
 
 실패 시 처리는 다음과 같습니다.
 
@@ -587,7 +587,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { auth, username, problems, solves, exp, exps, friends, achievements, description, favoriteAchievement, settings, profileImage, profileBackground }
+- { auth, username, problems, solves, exps, friends, achievements, description, favoriteAchievement, settings, profileImage, profileBackground }
 
 실패 시 처리는 다음과 같습니다.
 
