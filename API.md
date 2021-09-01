@@ -233,7 +233,8 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 요청한 사용자가 문제 생성 권한이 있으며 주어진 그룹에 속해 있는 경우, 주어진 문제를 새로 추가합니다.
 
-- { title, source, flag, content, group }
+- { title, 
+flag, content, group }
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
@@ -265,7 +266,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 - { count, problems }
   - count: 해당 문제의 열람 권한이 있는 문제들 중, 주어진 조건에 맞는 문제의 개수입니다. sort 혹은 page에 영향을 받지 __않습니다__.
   - problems: 문제 정보들을 sort에 따라 정렬했을 때, [25 * (page - 1), 25 * page) 구간 배열입니다. 문제 정보는 다음과 같은 객체입니다.
-    - { id, levels, title, source, uuid, solves }
+    - { id, levels, title, source, solves }
 
 실패 시 처리는 다음과 같습니다.
 
