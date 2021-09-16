@@ -145,20 +145,26 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 
 ```cpp
 // 입력: uid, id, levels[6]
-auto& p = problems[id];
-auto sum = 0;
-p.solves += 1;
+auto& problem = problems[id];
+int64 exp = 0;
+int64 prev_exp = 0;
+
+problem.solves += 1;
 for (int i = 0; i < 6; i++) {
-	auto old_plevel = p.levels[i];
-	p.levels[i] += (levels[i] - p.levels[i]) / p.solves;
-	sum += 1 << round(p.levels[i]);
-	users[uid].exp += 1 << round(old_plevel);
-	auto diff = (1 << round(p.levels[i])) - (1 << round(old_plevel));
-	if (diff != 0)
-		for (auto& user : p.solvers)
-			user.exps[i] += diff;
+	prev_exp += 1 << problem.levels[i];
+
+	problem.level_sum[i] += levels[i];
+	problem.level[i] = (problem.level_sum[i] + problem.solves / 2) / problem.solves;
+
+	exp += 1 << problem.levels[i];
 }
-p.level = floor(log2(sum));
+problem.level = floor(log2(exp));
+
+int64 diff = exp - prev_exp;
+users[uid].exp += prev_exp;
+if (diff != 0)
+	for (auto& user : problem.solvers)
+		user.exps[i] += diff;
 ```
 
 ### 문제
