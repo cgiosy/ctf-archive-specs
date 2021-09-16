@@ -141,30 +141,34 @@ CTF 아카이브의 API의 명세와 조건, 참고사항 및 예외들을 정�
 - commentTime: 사용자가 해당 문제에 대한 평가를 마지막으로 수정한 시간입니다. 8바이트 UNIX timestamp입니다.
 - comment: 사용자가 해당 문제에 대해 적은 평가입니다. 65536바이트 이하의 문자열입니다.
 
-제출이 추가될 경우, 다음 의사코드와 동일한 일을 수행하는 [TRIGGER](https://www.postgresql.org/docs/current/sql-createtrigger.html)를 작동시켜야 합니다.
+제출이 추가되기 직전, 다음 의사코드와 동일한 일을 수행하는 [TRIGGER](https://www.postgresql.org/docs/current/sql-createtrigger.html)를 작동시켜야 합니다.
 
 ```cpp
 // 입력: uid, id, levels[6]
-auto& problem = problems[id];
-int64 exp = 0;
-int64 prev_exp = 0;
+Problem& problem = problems[id];
+int64 new_level_sums[6];
+int64 new_levels[6];
+int64 new_exps[6];
+int64 new_exp_sum = 0;
+int64 diffs[6];
+int64 diff_sum = 0;
 
 problem.solves += 1;
 for (int i = 0; i < 6; i++) {
-	prev_exp += 1 << problem.levels[i];
-
-	problem.level_sum[i] += levels[i];
-	problem.level[i] = (problem.level_sum[i] + problem.solves / 2) / problem.solves;
-
-	exp += 1 << problem.levels[i];
+	diffs[i] = -(1 << problem.levels[i]);
+	new_level_sums[i] = problem.level_sums[i] + levels[i];
+	new_levels[i] = (new_level_sums[i] + problem.solves / 2) / problem.solves;
+	new_exps[i] = 1 << problem.levels[i];
+	new_exp_sum += new_exps[i];
+	diffs[i] += 1 << problem.levels[i];
+	diff_sum += diffs[i];
 }
-problem.level = floor(log2(exp));
+problem.(level_sums, levels) = (new_level_sums, new_levels);
 
-int64 diff = exp - prev_exp;
-users[uid].exp += prev_exp;
 if (diff != 0)
 	for (auto& user : problem.solvers)
-		user.exps[i] += diff;
+		user.(exp, exps) += (diff_sum, diffs);
+users[uid].(exp, exps) += (new_exp_sum, new_exps);
 ```
 
 ### 문제
