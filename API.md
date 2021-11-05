@@ -677,7 +677,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { username, solves, exps, achievements, description, favoriteAchievement, profileImage, profileBackground }
+- { username,ranking,  solves, exps, achievements, description, favoriteAchievement, profileImage, profileBackground }
 
 실패 시 처리는 다음과 같습니다.
 
@@ -689,7 +689,7 @@ CTF 아카이브에서 사용자의 입력은 다음 세 가지 중 하나의 �
 
 성공 시 반환값은 JSON이며, 다음과 같은 객체입니다.
 
-- { auth, username, problems, solves, exps, friends, achievements, description, favoriteAchievement, settings, profileImage, profileBackground }
+- { auth, username, problems, ranking, solves, exps, friends, achievements, description, favoriteAchievement, settings, profileImage, profileBackground }
 
 실패 시 처리는 다음과 같습니다.
 
